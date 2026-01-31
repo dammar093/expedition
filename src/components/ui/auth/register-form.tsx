@@ -16,14 +16,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { CardWrapper } from "./card-wrapper";
 import { Controller, useForm } from "react-hook-form";
-import { loginSchema } from "@/schema/auth";
+import { loginSchema, registerSchema } from "@/schema/auth";
 import { Input } from "../input";
 import { Button } from "../button";
 
-export const LoginForm = () => {
-  const form = useForm<z.infer<typeof loginSchema>>({
-    resolver: zodResolver(loginSchema),
+export const RegisgterForm = () => {
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
@@ -32,14 +33,35 @@ export const LoginForm = () => {
   function onSubmit(values: z.infer<typeof loginSchema>) {}
   return (
     <CardWrapper
-      headerLabel="Welcome Back!"
-      backButtonHref="/register"
-      backButtonLable="register"
-      backButtonDescription="Did not have an account?"
+      headerLabel="Create Account!"
+      backButtonHref="/login"
+      backButtonLable="login"
+      backButtonDescription="Already have an account?"
       showSocial
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>
+                  Name<span className="text-red-400">*</span>
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="name"
+                  arial-invalid={fieldState.invalid}
+                  placeholder="Enter your name"
+                  autoComplete="off"
+                />
+                {fieldState?.invalid && (
+                  <FieldError errors={[fieldState?.error]} />
+                )}
+              </Field>
+            )}
+          />
           <Controller
             name="email"
             control={form.control}
