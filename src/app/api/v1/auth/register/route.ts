@@ -5,9 +5,9 @@ import { error, success } from "@/lib/api-response";
 
 /**
  * @swagger
- * /auth/login:
+ * /auth/register:
  *   post:
- *     summary: Login and validate credentials
+ *     summary: Register user and validate credentials
  *     tags:
  *       - Auth
  *     requestBody:
@@ -17,6 +17,8 @@ import { error, success } from "@/lib/api-response";
  *           schema:
  *             type: object
  *             properties:
+ *               name:
+ *                 type: string
  *               email:
  *                 type: string
  *               password:
@@ -25,8 +27,8 @@ import { error, success } from "@/lib/api-response";
  *               - email
  *               - password
  *     responses:
- *       200:
- *         description: Login successful, JWT token returned
+ *       201:
+ *         description: User register successful, JWT token returned
  *         content:
  *           application/json:
  *             schema:
@@ -34,17 +36,17 @@ import { error, success } from "@/lib/api-response";
  *               properties:
  *                 status:
  *                   type: string
- *                   example: 200
+ *                   example: 201
  *                 message:
  *                   type: string
- *                   example: Login successful
+ *                   example: User register successful
  *                 data:
  *                   type: object
  *                   properties:
  *                     jwt_token:
  *                       type: string
  *       400:
- *         description: Missing email or password
+ *         description: Missing name or email or password, 
  *         content:
  *           application/json:
  *             schema:
@@ -55,7 +57,7 @@ import { error, success } from "@/lib/api-response";
  *                   example: 400
  *                 message:
  *                   type: string
- *                   example: Email and password are required
+ *                   example:Name and Email and password are required
  */
 
 export async function POST(req: NextRequest) {
