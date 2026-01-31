@@ -40,7 +40,7 @@ export const LoginForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>
+                <FieldLabel htmlFor="email">
                   Email<span className="text-red-400">*</span>
                 </FieldLabel>
                 <Input
@@ -61,7 +61,7 @@ export const LoginForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>
+                <FieldLabel htmlFor="password">
                   Password<span className="text-red-400">*</span>
                 </FieldLabel>
                 <Input
