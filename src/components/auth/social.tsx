@@ -1,6 +1,6 @@
 import { Loader } from "@/components/shared/loader";
 import { FcGoogle } from "react-icons/fc";
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 
 export const Social = () => {
   return (

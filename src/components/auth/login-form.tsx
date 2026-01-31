@@ -1,26 +1,21 @@
 "use client";
-import React from "react";
+import { Button } from "@/components/ui/button";
 import {
   Field,
-  FieldContent,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSeparator,
-  FieldSet,
-  FieldTitle,
 } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { loginSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { CardWrapper } from "./card-wrapper";
-import { Controller, useForm } from "react-hook-form";
-import { loginSchema } from "@/schema/auth";
-import { Input } from "../input";
-import { Button } from "../button";
 
 export const LoginForm = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -82,11 +77,24 @@ export const LoginForm = () => {
               </Field>
             )}
           />
+
+          <div className="flex justify-end">
+            <Button
+              variant={"link"}
+              type="button"
+              className="p-0 hover:text-blue-600 cursor-pointer"
+              size={"lg"}
+              onClick={() => router.push("/forgot-password")}
+            >
+              Forgot Password?
+            </Button>
+          </div>
+
           <Button
             type="submit"
             variant={"default"}
             size={"lg"}
-            className="w-full"
+            className="w-full cursor-pointer"
           >
             Login
           </Button>

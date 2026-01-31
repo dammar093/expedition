@@ -1,24 +1,17 @@
 "use client";
-import React from "react";
 import {
   Field,
-  FieldContent,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSeparator,
-  FieldSet,
-  FieldTitle,
 } from "@/components/ui/field";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { CardWrapper } from "./card-wrapper";
-import { Controller, useForm } from "react-hook-form";
 import { loginSchema, registerSchema } from "@/schema/auth";
-import { Input } from "../input";
-import { Button } from "../button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { CardWrapper } from "./card-wrapper";
 
 export const RegisgterForm = () => {
   const form = useForm<z.infer<typeof registerSchema>>({
@@ -108,9 +101,9 @@ export const RegisgterForm = () => {
             type="submit"
             variant={"default"}
             size={"lg"}
-            className="w-full"
+            className="w-full cursor-pointer"
           >
-            Login
+            Create Account
           </Button>
         </FieldGroup>
       </form>

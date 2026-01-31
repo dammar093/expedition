@@ -16,9 +16,9 @@ import { BackButton } from "./back-button";
 interface ICardWrapperProps {
   children: React.ReactNode;
   headerLabel: string;
-  backButtonLable: string;
-  backButtonHref: string;
-  backButtonDescription: string;
+  backButtonLable?: string;
+  backButtonHref?: string;
+  backButtonDescription?: string;
   showSocial?: boolean;
 }
 export const CardWrapper = ({
@@ -48,15 +48,25 @@ export const CardWrapper = ({
       </CardHeader>
 
       <CardContent>{children}</CardContent>
-      <div className="px-4">{showSocial && <DividerWithText text="OR" />}</div>
-      <CardFooter>{showSocial && <Social />}</CardFooter>
-      <CardFooter>
-        <BackButton
-          backButtonDescription={backButtonDescription}
-          backuttonLabel={backButtonLable}
-          backButtonHref={backButtonHref}
-        />
-      </CardFooter>
+      {showSocial && (
+        <div className="px-4">
+          <DividerWithText text="OR" />
+        </div>
+      )}
+      {showSocial && (
+        <CardFooter>
+          <Social />
+        </CardFooter>
+      )}
+      {backButtonHref && (
+        <CardFooter>
+          <BackButton
+            backButtonDescription={backButtonDescription}
+            backuttonLabel={backButtonLable}
+            backButtonHref={backButtonHref}
+          />
+        </CardFooter>
+      )}
     </Card>
   );
 };

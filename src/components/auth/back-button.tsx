@@ -1,11 +1,11 @@
 import React from "react";
-import { Button } from "../button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 interface IBackButtonProps {
-  backButtonDescription: string;
-  backuttonLabel: string;
-  backButtonHref: string;
+  backButtonDescription?: string;
+  backuttonLabel?: string;
+  backButtonHref?: string;
 }
 export const BackButton = ({
   backButtonDescription,

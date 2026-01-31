@@ -1,5 +1,4 @@
-import { RegisgterForm } from "@/components/ui/auth/register-form";
-import React from "react";
+import { RegisgterForm } from "@/components/auth/register-form";
 
 const RegisterPage = () => {
   return <RegisgterForm />;
