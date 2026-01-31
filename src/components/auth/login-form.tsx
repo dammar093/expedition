@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { CardWrapper } from "./card-wrapper";
+import ErroMessage from "./error-message";
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -35,6 +36,7 @@ export const LoginForm = () => {
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
+          <ErroMessage message="Something went wrong" />
           <Controller
             name="email"
             control={form.control}

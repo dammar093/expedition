@@ -5,13 +5,18 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { forgotPasswordSchema, loginSchema, registerSchema } from "@/schema/auth";
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  registerSchema,
+} from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CardWrapper } from "./card-wrapper";
+import ErroMessage from "./error-message";
 
 export const ForgotPasswordForm = () => {
   const form = useForm<z.infer<typeof forgotPasswordSchema>>({
@@ -30,6 +35,7 @@ export const ForgotPasswordForm = () => {
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
+          <ErroMessage message="Something went wrong" />
           <Controller
             name="email"
             control={form.control}

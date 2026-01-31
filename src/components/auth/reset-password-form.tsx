@@ -12,6 +12,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CardWrapper } from "./card-wrapper";
+import ErroMessage from "./error-message";
 
 export const ResetPasswordForm = () => {
   const form = useForm<z.infer<typeof resetPasswodSchema>>({
@@ -32,6 +33,7 @@ export const ResetPasswordForm = () => {
     >
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup>
+          <ErroMessage message="Something went wrong" />
           <Controller
             name="email"
             control={form.control}
