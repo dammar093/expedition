@@ -5,7 +5,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { loginSchema, registerSchema } from "@/schema/auth";
+import { forgotPasswordSchema, loginSchema, registerSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -14,14 +14,14 @@ import { Input } from "@/components/ui/input";
 import { CardWrapper } from "./card-wrapper";
 
 export const ForgotPasswordForm = () => {
-  const form = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+  const form = useForm<z.infer<typeof forgotPasswordSchema>>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {}
+  function onSubmit(values: z.infer<typeof forgotPasswordSchema>) {}
   return (
     <CardWrapper
       headerLabel="Forgot Password!"
@@ -35,7 +35,7 @@ export const ForgotPasswordForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>
+                <FieldLabel htmlFor="email">
                   Email<span className="text-red-400">*</span>
                 </FieldLabel>
                 <Input
