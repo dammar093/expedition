@@ -1,13 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
-import { error, success } from "@/lib/api-response";
-
+import { success, error } from "@/lib/api-response";
 
 /**
  * @swagger
  * /auth/login:
  *   post:
- *     summary: Login and validate credentials
+ *     summary: Login user and return JWT
  *     tags:
  *       - Auth
  *     requestBody:
@@ -26,48 +25,19 @@ import { error, success } from "@/lib/api-response";
  *               - password
  *     responses:
  *       200:
- *         description: Login successful, JWT token returned
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: 200
- *                 message:
- *                   type: string
- *                   example: Login successful
- *                 data:
- *                   type: object
- *                   properties:
- *                     jwt_token:
- *                       type: string
+ *         description: Login successful
  *       400:
  *         description: Missing email or password
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: 400
- *                 message:
- *                   type: string
- *                   example: Email and password are required
  */
-
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { email, password } = body;
+    const { email, password } = await req.json();
 
     if (!email || !password) {
-      return error({ status: 400, message: "Email and password are required" },)
+      return error({ status: 400, message: "Email and password are required" });
     }
 
-    // 👇 Example: sign JWT token (replace with real auth check)
+    // Simulate login
     const jwtToken = jwt.sign(
       { email },
       process.env.JWT_SECRET || "secret_key",
@@ -78,11 +48,8 @@ export async function POST(req: NextRequest) {
       status: 200,
       message: "Login successful",
       data: { jwt_token: jwtToken },
-    },)
+    });
   } catch (err: any) {
-    return error({
-      status: 500,
-      message: "Something went wrong"
-    })
+    return error({ status: 500, message: err.message || "Something went wrong" });
   }
 }
