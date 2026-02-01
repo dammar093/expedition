@@ -1,20 +1,30 @@
 "use client";
+
+import { registerUser } from "@/app/(auth)/register/_api/resgister";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { loginSchema, registerSchema } from "@/schema/auth";
+import { Input } from "@/components/ui/input";
+import { registerSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff } from "lucide-react";
+import { useState, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Loader } from "../shared/loader";
 import { CardWrapper } from "./card-wrapper";
 import ErroMessage from "./error-message";
+import { useRouter } from "next/navigation";
 
 export const RegisgterForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -24,7 +34,14 @@ export const RegisgterForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {}
+  // submitting form
+  function onSubmit(values: z.infer<typeof registerSchema>) {
+    startTransition(async () => {
+      await registerUser(values);
+      router.push("/login");
+    });
+  }
+
   return (
     <CardWrapper
       headerLabel="Create Account!"
@@ -33,9 +50,11 @@ export const RegisgterForm = () => {
       backButtonDescription="Already have an account?"
       showSocial
     >
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
         <FieldGroup>
           <ErroMessage message="Something went wrong" />
+
+          {/* NAME */}
           <Controller
             name="name"
             control={form.control}
@@ -47,16 +66,19 @@ export const RegisgterForm = () => {
                 <Input
                   {...field}
                   id="name"
-                  arial-invalid={fieldState.invalid}
                   placeholder="Enter your name"
                   autoComplete="off"
+                  disabled={isPending}
+                  aria-invalid={fieldState.invalid}
                 />
-                {fieldState?.invalid && (
-                  <FieldError errors={[fieldState?.error]} />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
                 )}
               </Field>
             )}
           />
+
+          {/* EMAIL */}
           <Controller
             name="email"
             control={form.control}
@@ -68,16 +90,20 @@ export const RegisgterForm = () => {
                 <Input
                   {...field}
                   id="email"
-                  arial-invalid={fieldState.invalid}
+                  type="email"
                   placeholder="Enter your email"
+                  disabled={isPending}
                   autoComplete="off"
+                  aria-invalid={fieldState.invalid}
                 />
-                {fieldState?.invalid && (
-                  <FieldError errors={[fieldState?.error]} />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
                 )}
               </Field>
             )}
           />
+
+          {/* PASSWORD */}
           <Controller
             name="password"
             control={form.control}
@@ -86,26 +112,41 @@ export const RegisgterForm = () => {
                 <FieldLabel htmlFor="password">
                   Password<span className="text-red-400">*</span>
                 </FieldLabel>
-                <Input
-                  {...field}
-                  id="password"
-                  arial-invalid={fieldState.invalid}
-                  placeholder="Enter your password"
-                  autoComplete="off"
-                />
-                {fieldState?.invalid && (
-                  <FieldError errors={[fieldState?.error]} />
+
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    disabled={isPending}
+                    autoComplete="off"
+                    aria-invalid={fieldState.invalid}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
                 )}
               </Field>
             )}
           />
+
           <Button
             type="submit"
-            variant={"default"}
-            size={"lg"}
+            disabled={isPending}
+            size="lg"
             className="w-full cursor-pointer"
           >
-            Create Account
+            Create Account {isPending && <Loader />}
           </Button>
         </FieldGroup>
       </form>

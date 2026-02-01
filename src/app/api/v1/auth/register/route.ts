@@ -1,6 +1,8 @@
+import { error, success } from "@/lib/api-response";
+import { registerSchema } from "@/schema/auth";
 import { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
-import { success, error } from "@/lib/api-response";
+import { prisma } from "@/lib/prisma"
+import { hashedPassword } from "@/utils/hash-password";
 
 /**
  * @swagger
@@ -34,23 +36,43 @@ import { success, error } from "@/lib/api-response";
  */
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, password } = await req.json();
+    const body = await req.json()
+    console.log(body)
+    const validFields = registerSchema.safeParse(body)
+    if (validFields?.error) return error({ status: 400, message: "Invalid field error" });
+    const { name, email, password } = validFields.data;
 
     if (!name || !email || !password) {
       return error({ status: 400, message: "Name, email, and password are required" });
     }
 
-    // Simulate registration
-    const jwtToken = jwt.sign(
-      { name, email },
-      process.env.JWT_SECRET || "secret_key",
-      { expiresIn: "1h" }
-    );
+    // checking if the uer exist or not with the email 
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email
+      }
+    })
+
+    if (existingUser) {
+      error({
+        status: 400,
+        message: "User already register"
+      })
+    }
+
+    //hashed the password 
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: await hashedPassword(password)
+      }
+    })
 
     return success({
       status: 201,
       message: "User registered successfully",
-      data: { jwt_token: jwtToken },
+      data: null,
     });
   } catch (err: any) {
     return error({ status: 500, message: err.message || "Something went wrong" });

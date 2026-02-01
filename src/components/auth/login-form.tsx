@@ -14,9 +14,15 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { CardWrapper } from "./card-wrapper";
 import ErroMessage from "./error-message";
+import { useState, useTransition } from "react";
+import { loginUser } from "@/app/(auth)/login/_api/login";
+import { Loader } from "../shared/loader";
+import { Eye, EyeOff } from "lucide-react";
 
 export const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -25,7 +31,13 @@ export const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {}
+  function onSubmit(values: z.infer<typeof loginSchema>) {
+    startTransition(async () => {
+      await loginUser(values);
+      router.push("/login");
+    });
+  }
+
   return (
     <CardWrapper
       headerLabel="Welcome Back!"
@@ -50,6 +62,7 @@ export const LoginForm = () => {
                   id="email"
                   arial-invalid={fieldState.invalid}
                   placeholder="Enter your email"
+                  disabled={isPending}
                   autoComplete="off"
                 />
                 {fieldState?.invalid && (
@@ -66,16 +79,25 @@ export const LoginForm = () => {
                 <FieldLabel htmlFor="password">
                   Password<span className="text-red-400">*</span>
                 </FieldLabel>
-                <Input
-                  {...field}
-                  id="password"
-                  arial-invalid={fieldState.invalid}
-                  placeholder="Enter your password"
-                  autoComplete="off"
-                />
-                {fieldState?.invalid && (
-                  <FieldError errors={[fieldState?.error]} />
-                )}
+                <div className="relative">
+                  <Input
+                    {...field}
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    disabled={isPending}
+                    autoComplete="off"
+                    aria-invalid={fieldState.invalid}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </Field>
             )}
           />
@@ -95,10 +117,11 @@ export const LoginForm = () => {
           <Button
             type="submit"
             variant={"default"}
+            disabled={isPending}
             size={"lg"}
             className="w-full cursor-pointer"
           >
-            Login
+            Login {isPending && <Loader />}
           </Button>
         </FieldGroup>
       </form>

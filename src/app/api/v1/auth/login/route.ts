@@ -1,6 +1,7 @@
-import { NextRequest } from "next/server";
-import jwt from "jsonwebtoken";
-import { success, error } from "@/lib/api-response";
+import { signIn } from "@/auth";
+import { error } from "@/lib/api-response";
+import { AuthError } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
 /**
  * @swagger
@@ -29,27 +30,37 @@ import { success, error } from "@/lib/api-response";
  *       400:
  *         description: Missing email or password
  */
-export async function POST(req: NextRequest) {
-  try {
-    const { email, password } = await req.json();
 
-    if (!email || !password) {
-      return error({ status: 400, message: "Email and password are required" });
+
+export async function POST(req: NextRequest) {
+  const { email, password } = await req.json()
+
+  try {
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    })
+
+    if (!res) {
+      return error({ status: 401, message: "Invalid credentials" })
     }
 
-    // Simulate login
-    const jwtToken = jwt.sign(
-      { email },
-      process.env.JWT_SECRET || "secret_key",
-      { expiresIn: "1h" }
-    );
-
-    return success({
-      status: 200,
-      message: "Login successful",
-      data: { jwt_token: jwtToken },
-    });
+    return NextResponse.json({ message: "Login successful" })
   } catch (err: any) {
-    return error({ status: 500, message: err.message || "Something went wrong" });
+    if (err instanceof AuthError) {
+      switch (err.type) {
+        case "CredentialsSignin":
+          return error({
+            message: "Invalid credentials",
+            status: 401
+          })
+        default: return error({
+          message: "Something went wrong",
+          status: 500
+        })
+      }
+    }
+    throw err
   }
 }

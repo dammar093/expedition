@@ -1,13 +1,15 @@
-import React from "react";
-import { ThreeDots } from "react-loader-spinner";
+import { CircularProgress } from "react-loader-spinner";
 
-export const Loader = () => {
+interface ILoaderProps {
+  color?: string;
+  size?: number;
+}
+export const Loader = ({ color = "white", size = 90 }: ILoaderProps) => {
   return (
-    <ThreeDots
-      height="90"
-      width="0"
-      radius="9"
-      color="black"
+    <CircularProgress
+      height={size}
+      width={size}
+      color={color}
       ariaLabel="three-dots-loading"
       wrapperStyle={{ margin: "20px" }}
       wrapperClass="custom-loader"

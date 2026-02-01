@@ -2,6 +2,10 @@ import "dotenv/config";
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import { PrismaClient } from '../generated/prisma/client';
 
+declare global {
+  var prisma:
+    PrismaClient | undefined
+}
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
@@ -9,6 +13,6 @@ const adapter = new PrismaMariaDb({
   database: process.env.DATABASE_NAME,
   connectionLimit: 5
 });
-const prisma = new PrismaClient({ adapter });
+const prisma = globalThis.prisma || new PrismaClient({ adapter });
 
 export { prisma }

@@ -4,7 +4,7 @@ import React from "react";
 const HomePage = () => {
   return (
     <div>
-      <Button>hello</Button>
+      <Button>logout</Button>
     </div>
   );
 };
