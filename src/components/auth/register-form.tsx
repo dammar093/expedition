@@ -1,6 +1,4 @@
 "use client";
-
-import { registerUser } from "@/app/(auth)/register/_api/resgister";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -19,11 +17,11 @@ import { Loader } from "../shared/loader";
 import { CardWrapper } from "./card-wrapper";
 import ErroMessage from "./error-message";
 import { useRouter } from "next/navigation";
+import useAuth from "@/app/(auth)/_hooks/useAuth";
 
 export const RegisgterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const { error, registerUser, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -34,14 +32,6 @@ export const RegisgterForm = () => {
     },
   });
 
-  // submitting form
-  function onSubmit(values: z.infer<typeof registerSchema>) {
-    startTransition(async () => {
-      await registerUser(values);
-      router.push("/login");
-    });
-  }
-
   return (
     <CardWrapper
       headerLabel="Create Account!"
@@ -50,9 +40,9 @@ export const RegisgterForm = () => {
       backButtonDescription="Already have an account?"
       showSocial
     >
-      <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
+      <form onSubmit={form.handleSubmit(registerUser)} noValidate>
         <FieldGroup>
-          <ErroMessage message="Something went wrong" />
+          <ErroMessage message={error} />
 
           {/* NAME */}
           <Controller
@@ -68,7 +58,7 @@ export const RegisgterForm = () => {
                   id="name"
                   placeholder="Enter your name"
                   autoComplete="off"
-                  disabled={isPending}
+                  disabled={isLoading}
                   aria-invalid={fieldState.invalid}
                 />
                 {fieldState.invalid && (
@@ -92,7 +82,7 @@ export const RegisgterForm = () => {
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  disabled={isPending}
+                  disabled={isLoading}
                   autoComplete="off"
                   aria-invalid={fieldState.invalid}
                 />
@@ -119,7 +109,7 @@ export const RegisgterForm = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    disabled={isPending}
+                    disabled={isLoading}
                     autoComplete="off"
                     aria-invalid={fieldState.invalid}
                   />
@@ -142,11 +132,11 @@ export const RegisgterForm = () => {
 
           <Button
             type="submit"
-            disabled={isPending}
+            disabled={isLoading}
             size="lg"
             className="w-full cursor-pointer"
           >
-            Create Account {isPending && <Loader />}
+            Create Account {isLoading && <Loader />}
           </Button>
         </FieldGroup>
       </form>

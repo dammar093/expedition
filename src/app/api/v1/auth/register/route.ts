@@ -37,7 +37,6 @@ import { hashedPassword } from "@/utils/hash-password";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    console.log(body)
     const validFields = registerSchema.safeParse(body)
     if (validFields?.error) return error({ status: 400, message: "Invalid field error" });
     const { name, email, password } = validFields.data;
@@ -47,16 +46,17 @@ export async function POST(req: NextRequest) {
     }
 
     // checking if the uer exist or not with the email 
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findFirst({
       where: {
         email
       }
     })
 
+    // if exiting user throw error
     if (existingUser) {
-      error({
+      return error({
         status: 400,
-        message: "User already register"
+        message: "User already register with this email"
       })
     }
 

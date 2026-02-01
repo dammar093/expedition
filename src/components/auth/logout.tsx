@@ -2,16 +2,20 @@
 
 import axios from "axios";
 import { Button } from "../ui/button";
+import useAuth from "@/app/(auth)/_hooks/useAuth";
+import { Loader } from "../shared/loader";
+import { toast } from "sonner";
 
 export function Logout() {
+  const { isLoading, error, logoutUser } = useAuth();
+  if (error) toast.error(error);
   return (
     <Button
+      disabled={isLoading}
       className="cursor-pointer"
-      onClick={async () => {
-        await axios.post("/api/v1/auth/logout");
-      }}
+      onClick={logoutUser}
     >
-      Logout
+      Logout {isLoading && <Loader />}
     </Button>
   );
 }

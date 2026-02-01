@@ -15,14 +15,14 @@ import * as z from "zod";
 import { CardWrapper } from "./card-wrapper";
 import ErroMessage from "./error-message";
 import { useState, useTransition } from "react";
-import { loginUser } from "@/app/(auth)/login/_api/login";
 import { Loader } from "../shared/loader";
 import { Eye, EyeOff } from "lucide-react";
+import useAuth from "@/app/(auth)/_hooks/useAuth";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const { loginUser, isLoading, error } = useAuth();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -30,13 +30,6 @@ export const LoginForm = () => {
       password: "",
     },
   });
-
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    startTransition(async () => {
-      await loginUser(values);
-      router.push("/login");
-    });
-  }
 
   return (
     <CardWrapper
@@ -46,9 +39,9 @@ export const LoginForm = () => {
       backButtonDescription="Did not have an account?"
       showSocial
     >
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(loginUser)}>
         <FieldGroup>
-          <ErroMessage message="Something went wrong" />
+          <ErroMessage message={error} />
           <Controller
             name="email"
             control={form.control}
@@ -62,7 +55,7 @@ export const LoginForm = () => {
                   id="email"
                   arial-invalid={fieldState.invalid}
                   placeholder="Enter your email"
-                  disabled={isPending}
+                  disabled={isLoading}
                   autoComplete="off"
                 />
                 {fieldState?.invalid && (
@@ -85,7 +78,7 @@ export const LoginForm = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    disabled={isPending}
+                    disabled={isLoading}
                     autoComplete="off"
                     aria-invalid={fieldState.invalid}
                   />
@@ -117,11 +110,11 @@ export const LoginForm = () => {
           <Button
             type="submit"
             variant={"default"}
-            disabled={isPending}
+            disabled={isLoading}
             size={"lg"}
             className="w-full cursor-pointer"
           >
-            Login {isPending && <Loader />}
+            Login {isLoading && <Loader />}
           </Button>
         </FieldGroup>
       </form>

@@ -2,7 +2,7 @@ import React from "react";
 import { FiAlertTriangle } from "react-icons/fi";
 
 interface IErrorMessage {
-  message?: string;
+  message?: string | null;
 }
 export default function ErroMessage({ message }: IErrorMessage) {
   if (!message) return null;
