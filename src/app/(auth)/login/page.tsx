@@ -1,8 +1,10 @@
-import React from "react";
-import { LoginForm } from "@/components/auth/login-form";
+import dynamic from "next/dynamic";
 
-const LoginPage = () => {
+// Dynamically import the named export `LoginForm`
+const LoginForm = dynamic(() =>
+  import("@/components/auth/login-form").then((mod) => mod.LoginForm),
+);
+
+export default function Page() {
   return <LoginForm />;
-};
-
-export default LoginPage;
+}

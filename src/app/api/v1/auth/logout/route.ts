@@ -16,17 +16,13 @@ import { error } from "@/lib/api-response";
  *       500:
  *         description: Internal server error
  */
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
     // Server-side logout
-    const res = await signOut({
+    await signOut({
       redirect: true,
       redirectTo: DEFAULT_REDIRECT_LOGIN_ROUTE
     });
-
-    if (!res) {
-      return error({ status: 401, message: "Unable to logout" });
-    }
 
     // Redirect user to login page
     return NextResponse.redirect(DEFAULT_REDIRECT_LOGIN_ROUTE);

@@ -13,6 +13,7 @@ async function main() {
       email: "dammarrana093@gmail.com",
       password: await hashedPassword("123456789"),
       role: "ADMIN",
+      emailVerified: new Date()
     },
   });
 

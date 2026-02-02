@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginSchema } from "@/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { CardWrapper } from "./card-wrapper";
@@ -21,6 +21,11 @@ import useAuth from "@/app/(auth)/_hooks/useAuth";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const searchPramas = useSearchParams();
+  const urlError =
+    searchPramas.get("error") === "OAuthAccountNotLinked"
+      ? "Email aready in use width differnt provider!"
+      : "";
   const router = useRouter();
   const { loginUser, isLoading, error } = useAuth();
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -41,7 +46,7 @@ export const LoginForm = () => {
     >
       <form onSubmit={form.handleSubmit(loginUser)}>
         <FieldGroup>
-          <ErroMessage message={error} />
+          <ErroMessage message={error || urlError} />
           <Controller
             name="email"
             control={form.control}
