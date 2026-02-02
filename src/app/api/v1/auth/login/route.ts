@@ -1,7 +1,8 @@
 import { signIn } from "@/auth";
-import { error } from "@/lib/api-response";
+import { error, success } from "@/lib/api-response";
 import { AuthError } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth"
 
 /**
  * @swagger
@@ -34,7 +35,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json()
-
+  const session = await auth()
   try {
     const res = await signIn("credentials", {
       email,
@@ -46,7 +47,8 @@ export async function POST(req: NextRequest) {
       return error({ status: 401, message: "Invalid credentials" })
     }
 
-    return NextResponse.json({ message: "Login successful" })
+    const token = session?.user.token
+    return success({ message: "Login successful", data: token })
   } catch (err: any) {
     if (err instanceof AuthError) {
       switch (err.type) {
