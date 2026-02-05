@@ -8,7 +8,8 @@ import { auth } from "@/auth"
  * @swagger
  * /auth/login:
  *   post:
- *     summary: Login user and return JWT
+ *     summary: Login user
+ *     description: Authenticate user using email and password and return JWT token
  *     tags:
  *       - Auth
  *     requestBody:
@@ -17,19 +18,44 @@ import { auth } from "@/auth"
  *         application/json:
  *           schema:
  *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
  *             required:
  *               - email
  *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: secret123
  *     responses:
  *       200:
  *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Login successful
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token:
+ *                       type: string
+ *                       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
  *       400:
  *         description: Missing email or password
+ *       401:
+ *         description: Invalid credentials
+ *       500:
+ *         description: Server error
  */
 
 
@@ -48,7 +74,11 @@ export async function POST(req: NextRequest) {
     }
 
     const token = session?.user.token
-    return success({ message: "Login successful", data: token })
+    return success({
+      message: "Login successful", data: {
+        token: token?.jti
+      }
+    })
   } catch (err: any) {
     if (err instanceof AuthError) {
       switch (err.type) {
