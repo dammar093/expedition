@@ -24,7 +24,7 @@ export const LoginForm = () => {
   const searchPramas = useSearchParams();
   const urlError =
     searchPramas.get("error") === "OAuthAccountNotLinked"
-      ? "Email aready in use width differnt provider!"
+      ? "Email aready in use width different provider!"
       : "";
   const router = useRouter();
   const { loginUser, isLoading, error } = useAuth();
